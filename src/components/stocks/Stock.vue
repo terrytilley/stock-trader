@@ -7,6 +7,7 @@
           <input
             type="numner"
             class="form-control"
+            :class="{'is-invalid': insufficientFunds}"
             placeholder="Quantity..."
             aria-label="Quantity..."
             v-model="quantity"
@@ -16,8 +17,8 @@
               class="btn btn-success"
               type="button"
               @click="buyStock"
-              :disabled="quantity <= 0 || Number.isNaN(Number(quantity))"
-            >Buy</button>
+              :disabled="insufficientFunds || quantity <= 0 || Number.isNaN(Number(quantity))"
+            >{{ insufficientFunds ? 'Insufficient Funds' : 'Buy' }}</button>
           </span>
         </div>
       </div>
@@ -32,6 +33,14 @@ export default {
     return {
       quantity: null,
     };
+  },
+  computed: {
+    funds() {
+      return this.$store.getters.funds;
+    },
+    insufficientFunds() {
+      return this.quantity * this.stock.price > this.funds;
+    },
   },
   methods: {
     buyStock() {

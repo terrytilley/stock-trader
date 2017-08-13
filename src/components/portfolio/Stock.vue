@@ -7,17 +7,18 @@
           <input
             type="numner"
             class="form-control"
+            :class="{'is-invalid': insufficientQuantity}"
             placeholder="Quantity..."
             aria-label="Quantity..."
             v-model="quantity"
           />
           <span class="input-group-btn">
             <button
-              class="btn btn-warning"
+              class="btn btn-danger"
               type="button"
               @click="sellStock"
-              :disabled="quantity <= 0 || Number.isNaN(Number(quantity))"
-            >Sell</button>
+              :disabled="insufficientQuantity || quantity <= 0 || Number.isNaN(Number(quantity))"
+            >{{ insufficientQuantity ? 'Not Enough Stocks' : 'Sell' }}</button>
           </span>
         </div>
       </div>
@@ -34,6 +35,11 @@ export default {
     return {
       quantity: null,
     };
+  },
+  computed: {
+    insufficientQuantity() {
+      return this.quantity > this.stock.quantity;
+    },
   },
   methods: {
     ...mapActions({
