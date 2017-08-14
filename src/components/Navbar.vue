@@ -85,7 +85,7 @@ export default {
 .btn-end:hover {
   color: #343a40;
 }
-.dropdown-toggle {
+.dropdown-toggle, .btn-end {
   cursor: pointer;
 }
 </style>
