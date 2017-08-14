@@ -17,11 +17,11 @@
             <strong>Funds:</strong> {{ funds | currency }}
           </span>
           <ul class="navbar-nav my-2 my-lg-0">
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="/" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Save / Load</a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                <a class="dropdown-item" href="#">Save Data</a>
-                <a class="dropdown-item" href="#">Load Data</a>
+            <li class="nav-item dropdown" :class="{show: isDropdownOpen}">
+              <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" @click="isDropdownOpen = !isDropdownOpen">Save / Load</a>
+              <div class="dropdown-menu" :class="{show: isDropdownOpen}" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="#" @click="saveData">Save Data</a>
+                <a class="dropdown-item" href="#" @click="loadData">Load Data</a>
               </div>
             </li>
             <li class="nav-item">
@@ -38,17 +38,34 @@
 import { mapActions } from 'vuex';
 
 export default {
+  data() {
+    return {
+      isDropdownOpen: false,
+    };
+  },
   computed: {
     funds() {
       return this.$store.getters.funds;
     },
   },
   methods: {
-    ...mapActions([
-      'randomizeStocks',
-    ]),
+    ...mapActions({
+      randomizeStocks: 'randomizeStocks',
+      fetchData: 'loadData',
+    }),
     endDay() {
       this.randomizeStocks();
+    },
+    saveData() {
+      const data = {
+        funds: this.$store.getters.funds,
+        stockPortfolio: this.$store.getters.stockPortfolio,
+        stocks: this.$store.getters.stocks,
+      };
+      this.$http.put('data.json', data);
+    },
+    loadData() {
+      this.fetchData();
     },
   },
 };
@@ -67,5 +84,8 @@ export default {
 }
 .btn-end:hover {
   color: #343a40;
+}
+.dropdown-toggle {
+  cursor: pointer;
 }
 </style>
